@@ -1,6 +1,6 @@
 var gulp         = require('gulp');
 var browserSync  = require('browser-sync').create();
-var sass         = require('gulp-sass');
+var less         = require('gulp-less');
 var autoprefixer = require('gulp-autoprefixer');
 var concatCss = require('gulp-concat-css');
 
@@ -8,31 +8,27 @@ var concatCss = require('gulp-concat-css');
 
 
 // Static Server + watching scss/html files
-gulp.task('serve', ['sass'], function() {
+gulp.task('serve', ['less'], function() {
 
     browserSync.init({
         server: "src/"
     });
 
     //Следим за изменениями файлов
-    gulp.watch("src/sass/*.sass", ['sass']);
+    gulp.watch("src/less/*.less", ['less']);
     gulp.watch("src/*.html").on('change', browserSync.reload);
 });
 
-// Компилируем Sass в Css и обновляем страницу
-gulp.task('sass', function() {
-    return gulp.src("src/sass/*.sass")
-        .pipe(sass().on('error', sass.logError))
-        
-        // настройки autoprefixer
+// Компилируем Less в Css и обновляем страницу
+
+gulp.task('less', function() {
+    return gulp.src("src/less/*.less")
+        .pipe(less())
         .pipe(autoprefixer({
-            browsers: ['last 4 versions'],
+            browsers: ['last 2 versions'],
             cascade: false
-        }))
-
-        //настройки concat-css
+            }))
         .pipe(concatCss("style.css"))
-
         .pipe(gulp.dest("src/css"))
         .pipe(browserSync.stream());
 });
